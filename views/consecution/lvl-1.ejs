@@ -1,0 +1,15 @@
+<%- include('../static/start.ejs') %>
+<%- include('../lvls/lvls_1.ejs') %>
+
+<%
+inputs = 1;
+task = "Написать программу, которая подсчитывает: периметр квадрата, площадь которого равна i/1";
+code ="let S = i/1; /%"+
+      "let s = Math.sqrt(S); /%"+
+      "let P = 4 * s; /%"+
+      "return `периметр квадрата равен ${P}`;";      
+%>
+
+<%- include('../static/header.ejs') %>
+<%- include('../lvls/lvls_2.ejs') %>
+<%- include('../static/end.ejs') %>

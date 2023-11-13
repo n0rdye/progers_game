@@ -1,0 +1,97 @@
+<%- include('./static/start.ejs') %>
+
+<style>
+    .levels{
+        display: flex;
+        justify-content: space-between;
+    }
+    .levels div{
+        text-align: center;
+    }
+    .lvl{
+        width: 100px;
+        height: 40px;
+        line-height: 35px;
+        cursor: pointer;
+        margin: auto;
+        padding: 5px;
+        border: 1px gray solid;
+        display: flex;
+        justify-content: space-around;
+        /* background-color: gray; */
+        border-radius: 10px;
+        margin: 10px;
+        margin-block: 40px;
+    }
+</style>
+
+<section class="main">
+    <div class="header" style="margin-block: 40px;"><h1>программирование javascript</h1></div>
+    <div class="levels">
+        <!-- <div class="branching"><h1>Ветвление</h1>
+            <div class="lvl_tab"></div>
+        </div>
+        <div class="looping"><h1>Циклы</h1>
+            <div class="lvl_tab"></div>
+        </div> -->
+    </div>
+</section>
+
+<script>
+    console.log('<%- complited %>');
+    let complited = JSON.parse('<%- complited %>')
+    check_lvls();
+    function check_lvls() {
+        Object.entries(complited).forEach(([theme,vars]) => {
+            let theme_div = document.createElement("div")
+            let theme_div_name = document.createElement("h1")
+            let theme_div_tab = document.createElement("div")
+            theme_div.classList.add(theme)
+            theme_div.classList.add(`theme-${vars["id"]}`)
+            theme_div.setAttribute("complited",vars["complited"])
+            theme_div_name.innerText = vars["name"];
+            theme_div_tab.classList.add("lvl_tab");
+            theme_div.appendChild(theme_div_name);
+            theme_div.appendChild(theme_div_tab);
+
+            document.getElementsByClassName("levels")[0].appendChild(theme_div)
+            
+            Object.entries(vars["lvls"]).forEach(([lvl,lvl_stat]) => {
+                let div = document.createElement("div");
+                div.classList.add("lvl")
+                div.id = `/${theme}/${lvl}`;
+                div.innerText = `уровень ${lvl}`;
+
+                if(lvl_stat){
+                    div.style.backgroundColor = "green";div.style.color = "white";
+                    div.setAttribute("onclick",`goto('/${theme}/${lvl}')`);
+                }else{
+
+                    if (vars["lvls"][lvl-1] == true || lvl == 1) {
+                        if(vars["id"]==1 || document.getElementsByClassName(`theme-${vars["id"]-1}`)[0].getAttribute("complited") == "true"){
+                            div.setAttribute("onclick",`goto('/${theme}/${lvl}')`);
+                        }else{
+                            div.setAttribute("onclick",`alert('Выполните предыдущую тему')`);
+                        }
+                    }else{
+                        div.setAttribute("onclick",`alert('Выполните предыдущий уровень')`);
+                    }
+                }
+
+                document.getElementsByClassName(theme)[0].getElementsByClassName("lvl_tab")[0].appendChild(div)
+            });
+        });
+    }
+
+    function check_lvl(theme,lvl) {
+        $.post(`/check/${theme}/${lvl}`)
+        .done(function( res ) {
+            console.log(res["body"]);
+            if(res["body"] == true){
+                return true;
+            }
+        })
+    }
+</script>
+
+<%- include('./static/end.ejs') %>

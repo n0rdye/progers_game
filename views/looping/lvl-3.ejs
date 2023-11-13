@@ -1,0 +1,16 @@
+<%- include('../static/start.ejs') %>
+<%- include('../lvls/lvls_1.ejs') %>
+
+<%
+inputs = 1;
+task = 'Написать программу, которая выводит на экран таблицу стоимости яблок, в диапазоне от 100 г до 1 кг с шагом 100. Где цена за 100 г i/1';
+code ="let cost = i/1; /%"+
+      "let cost_table = []; /%"+
+      "for(let i = 100; i <= 1000; i+=100) _% { /%"+
+      "cost_table.push(`${i} г. = ${(cost / 100) * i} руб.`); _% } /%"+
+      "return cost_table;"
+%>
+
+<%- include('../static/header.ejs') %>
+<%- include('../lvls/lvls_2.ejs') %>
+<%- include('../static/end.ejs') %>

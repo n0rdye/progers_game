@@ -1,0 +1,15 @@
+<%- include('../static/start.ejs') %>
+<%- include('../lvls/lvls_1.ejs') %>
+
+<%
+inputs = 2;
+task = "Написать программу, которая подсчитывает: среднее геометрическое модулей двух чисел i/1 и i/2";
+code ="let a = Math.abs(i/1); /%"+
+      "let b = Math.abs(i/2); /%"+
+      "let awg_geo = Math.sqrt((a*b),2); /%"+
+      "return `среднее геометрическое модулей двух чисел равно ${awg_geo}`;"
+%>
+
+<%- include('../static/header.ejs') %>
+<%- include('../lvls/lvls_2.ejs') %>
+<%- include('../static/end.ejs') %>

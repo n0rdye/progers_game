@@ -1,0 +1,33 @@
+<style>
+    .header{
+        display: flex;
+        padding: 5px;
+        margin: 5px;
+        justify-content: space-evenly;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+    .title{
+        display: flex;
+        justify-content: space-evenly;
+    }
+</style>
+<div class="title">
+    <h1><%= theme_name %> уровень <%= lvl %>  </h1>
+</div>
+<div class="header">
+    <button onclick="goto('/')">На главную</button>
+    <div class="header_btn1"></div>
+    <div class="header_btn2"></div>
+    <div class="header_btn3"></div>
+</div>
+
+<script>
+    if(parseInt("<%= lvl %>") > 1){
+        let next_btn = document.createElement("button")
+        next_btn.setAttribute("onclick",`goto('/<%= theme %>/<%= lvl-1 %>')`);
+        next_btn.innerText = "предыдущий уровень";   
+        document.getElementsByClassName("header_btn1")[0].innerHTML="";
+        document.getElementsByClassName("header_btn1")[0].appendChild(next_btn);
+    }
+</script>

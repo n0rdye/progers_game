@@ -1,0 +1,18 @@
+<%- include('../static/start.ejs') %>
+<%- include('../lvls/lvls_1.ejs') %>
+
+<%
+inputs = 0;
+task = 'Найти: все двузначные числа, сумма квадратов цифр которых делится на 13';
+code ="let nums = []; /%"+
+      "for (let i = 10; i <= 99; i++) _% {/%"+
+      "let a = parseInt(i / 10); /%"+
+      "let b = i % 10; /%"+
+      "let c = a * a + b * b; /%"+
+      "if (c % 13 == 0) nums.push(i); _% } /%"+
+      "return nums;"
+%>
+
+<%- include('../static/header.ejs') %>
+<%- include('../lvls/lvls_2.ejs') %>
+<%- include('../static/end.ejs') %>

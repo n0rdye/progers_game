@@ -1,0 +1,19 @@
+<%- include('../static/start.ejs') %>
+<%- include('../lvls/lvls_1.ejs') %>
+
+<%
+inputs = 0;
+task = 'Найти: все двузначные числа, обладающие следующим свойством: если к сумме цифр числа прибавить квадрат этой суммы, то получится снова искомое число.';
+code ="let nums = []; /%"+
+      "for (let i = 10; i <= 99; i++) _% { /%"+
+      "let a = parseInt(i / 10); /%"+
+      "let b = i % 10; /%"+
+      "let sum = a+b; /%"+
+      "let sqr = sum * sum; /%"+
+      "if((sum+sqr) == i) nums.push(i); _% } /%"+
+      "return nums;"
+%>
+
+<%- include('../static/header.ejs') %>
+<%- include('../lvls/lvls_2.ejs') %>
+<%- include('../static/end.ejs') %>

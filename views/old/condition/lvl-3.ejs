@@ -1,0 +1,314 @@
+<%- include('../static/start.ejs') %>
+<style>
+.dropzone {
+  background-color: #bfe4ff;
+  border: dashed 4px transparent;
+  border-radius: 4px;
+  /* margin: 10px auto 10px; */
+  /* padding: 10px; */
+  padding: 5px;
+  width: 50vw;
+  min-height: 50px;
+  transition: background-color 0.3s;
+}
+
+.drop-active {
+  border-color: #aaa;
+}
+
+.drop-target {
+  background-color: #29e;
+  border-color: #fff;
+  border-style: solid;
+}
+
+.drag-drop {
+  /* display: inline-block; */
+  min-width: 40px;
+  /* height: 15px; */
+  padding: 5px;
+
+  /* padding: 2em 0.5em; */
+  /* margin: 1rem 0 0 1rem; */
+
+  color: #fff;
+  background-color: #29e;
+  border: solid 2px #fff;
+
+  touch-action: none;
+  transform: translate(0px, 0px);
+
+  transition: background-color 0.3s;
+}
+
+.drag-drop.can-drop {
+  color: #000;
+  background-color: #4e4;
+}
+.code_vars li{
+  /* display: inline-table; */
+  width: max-content;
+  max-width: 280px;
+}
+</style>
+
+<%
+task = 'Человек вводит в компьютер число. Если оно находится в интервале от 28 до 30, то нужно напечатать текст ПОПАЛ, если оно больше 30 — то ПЕРЕЛЁТ, если оно меньше 28, то НЕДОЛЁТ.';
+code ="let int = prompt('Введите число'); /%"+
+      "if (28 <= int <= 30) _% { /%"+
+      "return 'ПОПАЛ'; _% } /%"+
+      "else if (int > 30) _% { /%"+
+      "return 'ПЕРЕЛЁТ'; _% } /%"+
+      "else if (int < 28) _% { /%"+
+      "return 'НЕДОЛЁТ'; _% }"
+%>
+
+<%- include('../static/header.ejs') %>
+<section class="main">
+  <div class="main-top" style="display: flex;">
+      <div class="code_space" style="width: 100vw;"></div>
+      <ul class="code_vars" style="border: 1px #29e solid;max-width: 300px; display: block;width: -webkit-fill-available;"></ul>
+    </div>
+    <div class="main-bottom" style="display: block;margin-top: 20px;">
+      <div class="task" style="margin-bottom: 20px;"><b>Задача: </b> <%= task %></div>
+      <div style="display: flex; justify-content: space-around;">
+        <button class="check_btn" onclick="check_task()">проверить</button>
+      </div>
+    </div>
+</section>
+
+<script>
+  // function get_lvl(callback){
+  //   fetch("/lvls/<%=theme%>/<%=lvl%>.txt")
+  //   .then((response) => {
+  //     return response.text();
+  //   })
+  //   .then((data) => {
+  //     callback(data);
+  //   })
+  // }
+
+  function check_next() {
+    $.post("/check/<%= theme %>/<%= lvl %>")
+      .done(function( res ) {
+        console.log(res["body"]);
+        if(res["body"] == true){
+          if("<%=lvl%>" != 5){
+            let next_btn = document.createElement("button")
+            next_btn.setAttribute("onclick",`goto('/<%= theme %>/<%= parseInt(lvl)+1 %>')`);
+            next_btn.innerText = "следующий уровень";   
+            document.getElementsByClassName("header_btn3")[0].appendChild(next_btn);
+          }
+        }
+    })
+  }
+  check_next()
+  let answer = {};
+  let code = [];
+show_task();
+
+function show_task() {
+  code = "<%-code%>".split("/%");
+  Object.entries(code).forEach(([key,value]) => {
+    code[key] = value.replace("_%","\n");
+  });
+
+  let arr = [];
+  Object.entries(code).forEach(([key,value]) => {
+    // console.log(key,value);
+    let new_obj = document.createElement("li");
+    new_obj.id = `ans-${key}`;
+    new_obj.classList.add("drag-drop");
+    new_obj.classList.add("drag");
+    new_obj.innerText = value;
+    
+    let ask_obj = document.createElement("div");
+    ask_obj.id = `ask-${key}`;
+    ask_obj.classList.add(`dropzone`);
+    
+    arr.push(new_obj);
+    console.log(arr);
+    // document.getElementsByClassName("code_vars")[0].appendChild(new_obj);
+    document.getElementsByClassName("code_space")[0].appendChild(ask_obj);  
+    answer[key] = null   
+  });
+
+  Object.entries(shuffle_array(arr)).forEach(([key,value]) => {
+    document.getElementsByClassName("code_vars")[0].appendChild(value);
+  });
+}
+
+  function shuffle_array(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    while (0 !== currentIndex) {
+
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
+
+  interact('.main').dropzone({
+  overlap: 0.75,
+
+  ondrop: function (event) {
+    var drag = event.relatedTarget;
+    var zone = event.target;
+    if(drag.parentNode.id.split("-").at(-1) != ""){
+      answer[drag.parentNode.id.split("-").at(-1)] = null
+    }
+    document.getElementsByClassName("code_vars")[0].appendChild(drag)
+    setpos(0,0,drag);
+  }
+})
+
+function check_task() {
+  if(!Object.values(answer).includes(null)){
+    let grade = 0;
+    Object.entries(answer).forEach(([key,value]) => {
+      if (value != null && value != "") {
+        document.getElementById(`ans-${value}`).classList.remove("drag");
+        if(key == value){
+          // document.getElementById(`ask-${key}`).style.backgroundColor = "green";
+          grade++;
+          document.getElementById(`ans-${value}`).style.backgroundColor = "green";
+        }else{
+          // document.getElementById(`ask-${key}`).style.backgroundColor = "red";
+          document.getElementById(`ans-${value}`).style.backgroundColor = "red";
+        } 
+      }
+    });
+    setTimeout(()=>{
+        if (grade == code.length) {
+          alert("Поздравляю вы прошли уровень");
+          console.log({theme:"<%= theme %>",lvl:"<%= lvl %>"});
+          $.post("/finish/<%= theme %>/<%= lvl %>")
+          .done(function( res ) {
+            document.getElementsByClassName("check_btn")[0].setAttribute("onclick","")
+            if("<%=lvl%>" != 5){
+              let next_btn = document.createElement("button")
+              next_btn.setAttribute("onclick",`goto('/<%= theme %>/<%= parseInt(lvl)+1 %>')`);
+              next_btn.innerText = "следующий уровень";   
+              document.getElementsByClassName("header_btn3")[0].innerHTML = "";
+              document.getElementsByClassName("header_btn3")[0].appendChild(next_btn);
+
+              let restart_btn = document.createElement("button")
+              restart_btn.setAttribute("onclick","goto('')");
+              restart_btn.innerText = "перезапустить";
+              document.getElementsByClassName("header_btn2")[0].innerHTML = "";
+              document.getElementsByClassName("header_btn2")[0].appendChild(restart_btn);
+            }
+            else{
+              alert("Поздравляю вы прошли всю тему <%=theme_name%>");
+            }
+          })
+        }
+        else{
+          alert("Вы не правильно выполнили задание");
+          let restart_btn = document.createElement("button")
+          restart_btn.setAttribute("onclick","goto('')");
+          restart_btn.innerText = "перезапустить";
+          document.getElementsByClassName("header_btn2")[0].innerHTML = "";
+          document.getElementsByClassName("header_btn2")[0].appendChild(restart_btn);
+        }
+    },700)
+  }
+  else{
+    alert("Сначала расставьте все строки")
+  }
+}
+
+interact('.dropzone').dropzone({
+  overlap: 0.75,
+
+  ondropactivate: function (event) {
+    // add active dropzone feedback
+    event.target.classList.add('drop-active')
+  },
+  ondragenter: function (event) {
+    var drag = event.relatedTarget
+    var zone = event.target
+
+    // feedback the possibility of a drop
+    zone.classList.add('drop-target')
+  },
+  ondragleave: function (event) {
+    var drag = event.relatedTarget;
+    var zone = event.target;
+    // remove the drop feedback style
+    // event.relatedTarget.classList.remove('can-drop')
+    event.target.classList.remove('drop-target')
+    // if(answer[zone.id.split("-").at(-1)] == drag.id.split("-").at(-1)){
+    //   answer[zone.id.split("-").at(-1)] = null
+    // }
+
+  },
+  ondrop: function (event) {
+    var drag = event.relatedTarget;
+    var zone = event.target;
+    if (zone.children.length == 0) {      
+      zone.appendChild(drag)
+      answer[zone.id.split("-").at(-1)] = drag.id.split("-").at(-1);
+      setpos(0,0,drag);
+    }
+    else{
+      let child = zone.childNodes[0];
+      let parent = drag.parentNode;
+      if(zone.id.split("-").at(-1) != ""){
+        answer[zone.id.split("-").at(-1)] = drag.id.split("-").at(-1);
+      }
+      if(parent.id.split("-").at(-1) != ""){
+        answer[parent.id.split("-").at(-1)] = child.id.split("-").at(-1);
+      }
+      parent.appendChild(child)
+      zone.appendChild(drag)
+      setpos(0,0,child);
+      setpos(0,0,drag);
+    }
+    console.log(answer);
+
+  },
+  ondropdeactivate: function (event) {
+    event.target.classList.remove('drop-active')
+    event.target.classList.remove('drop-target')
+  }
+})
+
+function dragMoveListener (event) {
+  var target = event.target
+  var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+  var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+  setpos(x,y,target);
+}
+
+function setpos(x,y,obj) {
+  obj.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+  obj.setAttribute('data-x', x)
+  obj.setAttribute('data-y', y)
+}
+
+// this function is used later in the resizing and gesture demos
+window.dragMoveListener = dragMoveListener
+
+interact('.drag')
+  .draggable({
+    inertia: true,
+    modifiers: [
+      interact.modifiers.restrictRect({
+        // restriction: 'parent',
+        endOnly: true
+      })
+    ],
+    autoScroll: false,
+    // dragMoveListener from the dragging demo above
+    listeners: { move: dragMoveListener }
+  })
+</script>
+
+<%- include('../static/end.ejs') %>

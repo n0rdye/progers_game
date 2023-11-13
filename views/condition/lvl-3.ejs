@@ -1,0 +1,19 @@
+<%- include('../static/start.ejs') %>
+<%- include('../lvls/lvls_1.ejs') %>
+
+
+<%
+inputs = 1;
+task = 'Человек вводит в компьютер число i/1. Если оно находится в интервале от 28 до 30, то нужно напечатать текст ПОПАЛ, если оно больше 30 — то ПЕРЕЛЁТ, если оно меньше 28, то НЕДОЛЁТ.';
+code ="let int = i/1; /%"+
+      "if (int <= 30 && int >= 28) _% { /%"+
+      "return 'ПОПАЛ'; _% } /%"+
+      "else if (int > 30) _% { /%"+
+      "return 'ПЕРЕЛЁТ'; _% } /%"+
+      "else if (int < 28) _% { /%"+
+      "return 'НЕДОЛЁТ'; _% }"
+%>
+
+<%- include('../static/header.ejs') %>
+<%- include('../lvls/lvls_2.ejs') %>
+<%- include('../static/end.ejs') %>

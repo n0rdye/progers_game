@@ -1,0 +1,17 @@
+<%- include('../static/start.ejs') %>
+<%- include('../lvls/lvls_1.ejs') %>
+
+<%
+inputs = 1;
+task = 'Ввести число i/1. Если оно неотрицательно, вычесть из него 50, в противном случае прибавить к нему 100.';
+code ="let int = i/1; /%"+
+      "if (int < 0) _% { /%"+
+      "int += 100; _% } /%"+
+      "else _% { /%"+
+      "int -= 50; _% } /%"+
+      "return int; _% "
+%>
+
+<%- include('../static/header.ejs') %>
+<%- include('../lvls/lvls_2.ejs') %>
+<%- include('../static/end.ejs') %>

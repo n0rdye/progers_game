@@ -1,0 +1,17 @@
+<%- include('../static/start.ejs') %>
+<%- include('../lvls/lvls_1.ejs') %>
+
+
+<%
+inputs = 2;
+task = 'Ввести 2 числа [ i/1 i/2 ]. Если их произведение отрицательно, умножить его на –2 и вывести на экран, в противном случае увеличить его в 1,5 раза и вывести на экран.';
+code ="let a = i/1, b = i/2; /%"+
+      "if (a * b < 0) _% { /%"+
+      "return ((a * b) * -2); _% } /%"+
+      "else _% { /%"+
+      "return ((a * b) * 1.5); _% }"
+%>
+
+<%- include('../static/header.ejs') %>
+<%- include('../lvls/lvls_2.ejs') %>
+<%- include('../static/end.ejs') %>
